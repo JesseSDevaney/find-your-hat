@@ -8,4 +8,12 @@ const myField = new Field([
   ["░", "^", "░"],
 ]);
 
-myField.print();
+console.log("Let's Play! Press (Ctrl + C) to exit the game at any time.");
+
+while (!myField.isGameOver) {
+  myField.print();
+  const userInput = prompt(
+    "What is your move ([u]p, [d]own, [l]eft, [r]ight): "
+  );
+  myField.movePlayer(userInput);
+}
