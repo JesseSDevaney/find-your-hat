@@ -1,0 +1,17 @@
+{
+  "name": "find-your-hat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A terminal maze-solving game.",
+  "main": "main.js",
+  "author": "Jesse S. Devaney",
+  "license": "MIT",
+  "engines": {
+    "node": "14.17.5",
+    "npm": "6.14.14"
+  },
+  "type": "module",
+  "dependencies": {
+    "prompt-sync": "^4.1.7"
+  }
+}
