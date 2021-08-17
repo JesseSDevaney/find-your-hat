@@ -1,6 +1,12 @@
 # Find Your Hat
 
-An interactive terminal game where the player has lost their hat in a field of holes. They must navigate to the hat while avoiding the holes.
+An interactive terminal game where the player has lost their hat in a field of holes. They must navigate to the hat while avoiding the holes. The grid consists of holes (0), a hat (^), an empty space (░), and the player (\* represents a space the player has visited).
+
+The game continues until:
+
+1. The player wins by finding their hat (^).
+2. Loses by landing on a hole space (0).
+3. Attempts to leave the field.
 
 Built through Codecademy's [Back-End Engineering Path](https://www.codecademy.com/learn/paths/back-end-engineer-career-path).
 
