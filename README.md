@@ -16,3 +16,14 @@ Built through Codecademy's [Back-End Engineering Path](https://www.codecademy.co
 2. Download and install [Node.js](https://nodejs.org/en/download/) (v14.17.5) for your system.
 3. Run `npm install` to install all dependencies
 4. Run the program by executing `node main.js` from the command line.
+
+## Usage
+
+**Example Game Start:**  
+![game-start-example](https://github.com/JesseSDevaney/find-your-hat/blob/main/usage_images/game-start.png?raw=true)
+
+**Example Game Path:**  
+![game-start-example](https://github.com/JesseSDevaney/find-your-hat/blob/main/usage_images/game-path.png?raw=true)
+
+**Example Game Win:**  
+![game-start-example](https://github.com/JesseSDevaney/find-your-hat/blob/main/usage_images/game-end.png?raw=true)
