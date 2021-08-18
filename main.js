@@ -2,11 +2,7 @@ import promptSync from "prompt-sync";
 import Field from "./modules/field.mjs";
 const prompt = promptSync({ sigint: true });
 
-const myField = new Field([
-  ["*", "░", "O"],
-  ["░", "O", "░"],
-  ["░", "^", "░"],
-]);
+const myField = new Field(Field.generateField(5, 5, 25));
 
 console.log("Let's Play! Press (Ctrl + C) to exit the game at any time.");
 

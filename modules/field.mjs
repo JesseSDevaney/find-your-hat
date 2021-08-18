@@ -142,6 +142,49 @@ class Field {
       );
     }
   }
+
+  static generateField(height = 4, width = 4, percentageAsHoles = 40) {
+    if (height <= 0) height = 1;
+    if (width <= 0) width = 1;
+    if (height === 1 && width === 1) {
+      return [[PATH_CHARACTER]];
+    }
+
+    const field = [];
+    for (let y = 0; y < height; y++) {
+      const row = [];
+      for (let x = 0; x < width; x++) {
+        row.push(FIELD_CHARACTER);
+      }
+      field.push(row);
+    }
+
+    field[0][0] = PATH_CHARACTER;
+
+    for (;;) {
+      const hatX = Math.floor(Math.random() * width);
+      const hatY = Math.floor(Math.random() * height);
+      if ((hatX !== 0) | (hatY !== 0)) {
+        field[hatY][hatX] = HAT;
+        break;
+      }
+    }
+
+    let numHoles = Math.ceil((height * width - 2) * (percentageAsHoles / 100));
+    if (numHoles > height * width - 2) numHoles = height * width - 2;
+    else if (numHoles < 0) numHoles = 0;
+
+    while (numHoles > 0) {
+      const randHoleX = Math.floor(Math.random() * width);
+      const randHoleY = Math.floor(Math.random() * height);
+      if (field[randHoleY][randHoleX] === FIELD_CHARACTER) {
+        field[randHoleY][randHoleX] = HOLE;
+        numHoles--;
+      }
+    }
+
+    return field;
+  }
 }
 
 export default Field;
