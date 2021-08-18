@@ -129,12 +129,12 @@ class Field {
       this._field[playerY][playerX] = PATH_CHARACTER;
     } else if (currentCell === HAT) {
       this._field[playerY][playerX] = PATH_CHARACTER;
-      console.log("Player has found their hat and won the game!");
       this.print();
+      console.log("Player has found their hat and won the game!");
       this.endGame();
     } else if (currentCell === HOLE) {
-      console.log("Player has fallen into a hole :(. Try again next time.");
       this.print();
+      console.log("Player has fallen into a hole :(. Try again next time.");
       this.endGame();
     } else {
       console.log(
