@@ -1,3 +1,6 @@
+import promptSync from "prompt-sync";
+const prompt = promptSync({ sigint: true });
+
 const HAT = "^";
 const HOLE = "O";
 const FIELD_CHARACTER = "░";
@@ -10,78 +13,83 @@ const printHorizontalRule = (length) => {
 class Field {
   constructor(field) {
     this._field = field;
-    this._currentPosition = [0, 0]; // [x, y]
-    this._isGameOver = false;
+    this._playerX = 0;
+    this._playerY = 0;
   }
 
-  get currentPosition() {
-    return this._currentPosition;
+  get playerCell() {
+    if (this.inBounds()) {
+      return this._field[this._playerY][this._playerX];
+    }
   }
 
-  get field() {
-    return this._field;
+  isFieldCharacter() {
+    return this.playerCell === FIELD_CHARACTER;
   }
 
-  get isGameOver() {
-    return this._isGameOver;
-  }
-
-  endGame() {
-    this._isGameOver = true;
-  }
-
-  moveDown() {
-    this._currentPosition[1] += 1;
-  }
-  moveLeft() {
-    this._currentPosition[0] -= 1;
-  }
-  moveRight() {
-    this._currentPosition[0] += 1;
-  }
-  moveUp() {
-    this._currentPosition[1] -= 1;
-  }
-
-  movePlayer(input) {
-    const move = this.parseMove(input);
-    if (!move) {
-      console.log(
-        "*".repeat(55) +
-          `\n${input} is not a valid choice. Choose one of [u, d, l, r].\n` +
-          "*".repeat(55) +
-          "\n"
-      );
-      return;
+  isGameOver() {
+    if (!this.inBounds()) {
+      console.log("Player has abandoned the search. Try again next time.");
+      return true;
     }
 
-    if (move === "u") this.moveUp();
-    else if (move === "d") this.moveDown();
-    else if (move === "l") this.moveLeft();
-    else if (move === "r") this.moveRight();
+    if (this.isHat()) {
+      this.updatePath();
+      this.print();
+      console.log("Player has found their hat and won the game!");
+      return true;
+    }
 
-    this.updateField();
+    if (this.isHole()) {
+      this.print();
+      console.log("Player has fallen into a hole :(. Try again next time.");
+      return true;
+    }
+
+    if (this.isFieldCharacter()) {
+      this.updatePath();
+    }
+
+    console.log(
+      "You are visiting a space you have already seen. I hope you remember where you are"
+    );
+    return false;
   }
 
-  print() {
-    const field = this.field;
-    let fieldPicture = "";
+  isHat() {
+    return this.playerCell === HAT;
+  }
 
-    field.forEach((row, i, rowsArr) => {
-      if (i !== 0) fieldPicture += "\n";
-      fieldPicture += printHorizontalRule(2 * row.length + 1) + "\n";
+  isHole() {
+    return this.playerCell === HOLE;
+  }
 
-      row.forEach((cell, j, cellsArr) => {
-        fieldPicture += "|" + cell;
-        if (j === cellsArr.length - 1) fieldPicture += "|";
-      });
+  inBounds() {
+    const playerX = this._playerX;
+    const playerY = this._playerY;
+    const height = this._field.length;
+    const width = this._field[0].length;
 
-      if (i === rowsArr.length - 1) {
-        fieldPicture += "\n" + printHorizontalRule(2 * row.length + 1);
+    return playerY < height && playerY >= 0 && playerX < width && playerX >= 0;
+  }
+
+  movePlayer() {
+    let move;
+    do {
+      const userInput = prompt(
+        "What is your move ([u]p, [d]own, [l]eft, [r]ight): "
+      );
+      move = this.parseMove(userInput);
+
+      if (!move) {
+        this.printInvalidMove();
       }
-    });
+    } while (!move);
 
-    console.log(fieldPicture);
+    if (move === "u") this._playerY -= 1;
+    else if (move === "d") this._playerY += 1;
+    else if (move === "l") this._playerX -= 1;
+    else if (move === "r") this._playerX += 1;
   }
 
   parseMove(input) {
@@ -109,38 +117,50 @@ class Field {
     return move;
   }
 
-  updateField() {
-    const [playerX, playerY] = this.currentPosition;
-    const numRows = this._field.length;
-    const numCols = this._field[0].length;
-    if (
-      playerY >= numRows ||
-      playerY < 0 ||
-      playerX >= numCols ||
-      playerX < 0
-    ) {
-      console.log("Player has abandoned the search. Try again next time.");
-      this.endGame();
-      return;
-    }
+  playGame() {
+    console.log("Let's Play! Press (Ctrl + C) to exit the game at any time!");
 
-    const currentCell = this._field[playerY][playerX];
-    if (currentCell === FIELD_CHARACTER) {
-      this._field[playerY][playerX] = PATH_CHARACTER;
-    } else if (currentCell === HAT) {
-      this._field[playerY][playerX] = PATH_CHARACTER;
+    let playing = true;
+    while (playing) {
       this.print();
-      console.log("Player has found their hat and won the game!");
-      this.endGame();
-    } else if (currentCell === HOLE) {
-      this.print();
-      console.log("Player has fallen into a hole :(. Try again next time.");
-      this.endGame();
-    } else {
-      console.log(
-        "You are visiting a space you have already seen. I hope you remember where you are"
-      );
+      this.movePlayer();
+
+      playing = !this.isGameOver();
     }
+  }
+
+  print() {
+    const field = this._field;
+    let fieldPicture = "";
+
+    field.forEach((row, i, rowsArr) => {
+      if (i !== 0) fieldPicture += "\n";
+      fieldPicture += printHorizontalRule(2 * row.length + 1) + "\n";
+
+      row.forEach((cell, j, cellsArr) => {
+        fieldPicture += "|" + cell;
+        if (j === cellsArr.length - 1) fieldPicture += "|";
+      });
+
+      if (i === rowsArr.length - 1) {
+        fieldPicture += "\n" + printHorizontalRule(2 * row.length + 1);
+      }
+    });
+
+    console.log(fieldPicture);
+  }
+
+  printInvalidMove() {
+    console.log(
+      "*".repeat(55) +
+        `\nThat is not a valid choice. Choose one of [u, d, l, r].\n` +
+        "*".repeat(55) +
+        "\n"
+    );
+  }
+
+  updatePath() {
+    this._field[this._playerY][this._playerX] = PATH_CHARACTER;
   }
 
   static generateField(height = 4, width = 4, percentageAsHoles = 40) {
